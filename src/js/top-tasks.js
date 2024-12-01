@@ -3,7 +3,6 @@ import AllTasks from "./all-tasks";
 import PinnedTasks from "./pinned-tasks";
 import SearchTasks from "./filter";
 
-
 export default class TopTasks {
   constructor(container) {
     this.container = container;
@@ -23,7 +22,7 @@ export default class TopTasks {
     this.onInput = this.onInput.bind(this);
     this.isInput = this.isInput.bind(this);
   }
-  
+
   createTopTasksHtml() {
     const topTasksHtml = `
       <div class="tasks">
@@ -42,20 +41,22 @@ export default class TopTasks {
           </div>
         </div>
       </div>`;
-    this.container.insertAdjacentHTML('beforeend', topTasksHtml);
+    this.container.insertAdjacentHTML("beforeend", topTasksHtml);
     this.tasksContainer = this.container.querySelector(".tasks");
     this.inputElement = this.tasksContainer.querySelector(".tasks__input");
     this.allTasksElement = this.tasksContainer.querySelector(".group__all");
     this.allTasksIsEmpty = this.allTasksElement.querySelector(".empty__group");
-    this.pinnedTasksElement = this.tasksContainer.querySelector(".group__pinned");
-    this.pinnedTasksIsEmpty = this.pinnedTasksElement.querySelector(".empty__group");
+    this.pinnedTasksElement =
+      this.tasksContainer.querySelector(".group__pinned");
+    this.pinnedTasksIsEmpty =
+      this.pinnedTasksElement.querySelector(".empty__group");
   }
 
   passValue() {
     const value = this.inputElement.value.trim();
     if (!value) {
       throw new Error("! Нельзя добавить пустую строку");
-    }  else {
+    } else {
       return value;
     }
   }
@@ -71,20 +72,21 @@ export default class TopTasks {
       if (existTooltip !== null) {
         existTooltip.remove();
       }
-    } catch(error) {
+    } catch (error) {
       const tooltipHtml = `<div class="tooltip">${error.message}</div>`;
-      this.inputElement.insertAdjacentHTML('afterEnd', tooltipHtml);
+      this.inputElement.insertAdjacentHTML("afterEnd", tooltipHtml);
       const tooltip = this.inputElement.nextElementSibling;
-      const {top, left} = this.inputElement.getBoundingClientRect();
+      const { top, left } = this.inputElement.getBoundingClientRect();
       tooltip.style.left = `${left}px`;
       tooltip.style.top = `${top - 17}px`;
       tooltip.classList.add("tooltip_active");
       this.inputElement.closest(".tasks__control").reset();
     }
   }
-  
-  clear(tasks) { 
-    if ([...tasks]) {
+
+  clear(tasks) {
+    const tasksArr = [...tasks];
+    if (tasksArr) {
       tasks.forEach((task) => task.remove());
     }
   }
@@ -92,11 +94,13 @@ export default class TopTasks {
   completeAllTasks() {
     const all = this.allTasksElement.querySelectorAll(".task");
     this.clear(all);
-    const searchTasksCollection = this.searchTasks.filter(this.inputElement.value.trim());
+    const searchTasksCollection = this.searchTasks.filter(
+      this.inputElement.value.trim(),
+    );
     if (searchTasksCollection.length > 0) {
       this.allTasksIsEmpty.classList.remove("empty__group_active");
-      searchTasksCollection.forEach(task => {
-        this.allTasksElement.insertAdjacentHTML('beforeend', task.taskHtml);
+      searchTasksCollection.forEach((task) => {
+        this.allTasksElement.insertAdjacentHTML("beforeend", task.taskHtml);
       });
       this.mooveToPinnedToggle();
     } else {
@@ -112,8 +116,8 @@ export default class TopTasks {
         this.pinnedTasksIsEmpty.classList.remove("empty__group_active");
       }
       this.pinnedTasksIsEmpty.classList.remove("empty__group_active");
-      this.pinnedTasks.tasks.forEach(task => {
-        this.pinnedTasksElement.insertAdjacentHTML('beforeend', task.taskHtml);
+      this.pinnedTasks.tasks.forEach((task) => {
+        this.pinnedTasksElement.insertAdjacentHTML("beforeend", task.taskHtml);
       });
       this.mooveToAllToggle();
     } else {
@@ -122,17 +126,21 @@ export default class TopTasks {
   }
 
   mooveToAllToggle() {
-    this.pinnedTasksElement.addEventListener('click', (event) => {
+    this.pinnedTasksElement.addEventListener("click", (event) => {
       const element = event.target;
       if (element.classList.contains("task__toggle-checked")) {
         event.stopImmediatePropagation();
-        const elementIndexToAll = this.pinnedTasks.tasks.findIndex(task => task.taskHtml === element.closest(".task").outerHTML);
-        const elementToAll = this.pinnedTasks.tasks.find(task => task.taskHtml === element.closest(".task").outerHTML);
+        const elementIndexToAll = this.pinnedTasks.tasks.findIndex(
+          (task) => task.taskHtml === element.closest(".task").outerHTML,
+        );
+        const elementToAll = this.pinnedTasks.tasks.find(
+          (task) => task.taskHtml === element.closest(".task").outerHTML,
+        );
         this.pinnedTasks.tasks.splice(elementIndexToAll, 1);
         if (this.pinnedTasks.tasks.length === 0) {
           this.pinnedTasksIsEmpty.classList.add("empty__group_active");
         }
-        elementToAll.taskHtml = `<div class="task"><div class="task__title">${elementToAll.value}</div><div class="task__toggle task__toggle-unchecked"></div></div>`
+        elementToAll.taskHtml = `<div class="task"><div class="task__title">${elementToAll.value}</div><div class="task__toggle task__toggle-unchecked"></div></div>`;
         this.allTasks.add(elementToAll);
         if (this.allTasks.tasks.length === 1) {
           this.allTasksIsEmpty.classList.remove("empty__group_active");
@@ -144,17 +152,21 @@ export default class TopTasks {
   }
 
   mooveToPinnedToggle() {
-    this.allTasksElement.addEventListener('click', (event) => {
+    this.allTasksElement.addEventListener("click", (event) => {
       const element = event.target;
       if (element.classList.contains("task__toggle-unchecked")) {
         event.stopImmediatePropagation();
-        const elementIndexToPin = this.allTasks.tasks.findIndex(task => task.taskHtml === element.closest(".task").outerHTML);
-        const elementToPin = this.allTasks.tasks.find(task => task.taskHtml === element.closest(".task").outerHTML);
+        const elementIndexToPin = this.allTasks.tasks.findIndex(
+          (task) => task.taskHtml === element.closest(".task").outerHTML,
+        );
+        const elementToPin = this.allTasks.tasks.find(
+          (task) => task.taskHtml === element.closest(".task").outerHTML,
+        );
         this.allTasks.tasks.splice(elementIndexToPin, 1);
         if (this.allTasks.tasks.length === 0) {
           this.allTasksIsEmpty.classList.add("empty__group_active");
         }
-        elementToPin.taskHtml = `<div class="task"><div class="task__title">${elementToPin.value}</div><div class="task__toggle task__toggle-checked"></div></div>`
+        elementToPin.taskHtml = `<div class="task"><div class="task__title">${elementToPin.value}</div><div class="task__toggle task__toggle-checked"></div></div>`;
         this.pinnedTasks.add(elementToPin);
         if (this.pinnedTasks.tasks.length === 1) {
           this.pinnedTasksIsEmpty.classList.remove("empty__group_active");
@@ -162,15 +174,17 @@ export default class TopTasks {
         this.completeAllTasks();
         this.completePinnedTasks();
       }
-    })
+    });
   }
-  
+
   onInput() {
     setTimeout(() => this.completeAllTasks(), 500);
   }
 
   isInput() {
-    this.inputElement.closest(".tasks__control").addEventListener('input', this.onInput);
+    this.inputElement
+      .closest(".tasks__control")
+      .addEventListener("input", this.onInput);
   }
 
   onEnterInput(e) {
@@ -179,6 +193,8 @@ export default class TopTasks {
   }
 
   isEnter() {
-    this.inputElement.closest(".tasks__control").addEventListener('submit', this.onEnterInput);
-  } 
+    this.inputElement
+      .closest(".tasks__control")
+      .addEventListener("submit", this.onEnterInput);
+  }
 }
