@@ -102,7 +102,6 @@ export default class TopTasks {
       searchTasksCollection.forEach((task) => {
         this.allTasksElement.insertAdjacentHTML("beforeend", task.taskHtml);
       });
-      this.mooveToPinnedToggle();
     } else {
       this.allTasksIsEmpty.classList.add("empty__group_active");
     }
@@ -119,7 +118,6 @@ export default class TopTasks {
       this.pinnedTasks.tasks.forEach((task) => {
         this.pinnedTasksElement.insertAdjacentHTML("beforeend", task.taskHtml);
       });
-      this.mooveToAllToggle();
     } else {
       this.pinnedTasksIsEmpty.classList.add("empty__group_active");
     }
@@ -129,7 +127,6 @@ export default class TopTasks {
     this.pinnedTasksElement.addEventListener("click", (event) => {
       const element = event.target;
       if (element.classList.contains("task__toggle-checked")) {
-        event.stopImmediatePropagation();
         const elementIndexToAll = this.pinnedTasks.tasks.findIndex(
           (task) => task.taskHtml === element.closest(".task").outerHTML,
         );
@@ -155,7 +152,6 @@ export default class TopTasks {
     this.allTasksElement.addEventListener("click", (event) => {
       const element = event.target;
       if (element.classList.contains("task__toggle-unchecked")) {
-        event.stopImmediatePropagation();
         const elementIndexToPin = this.allTasks.tasks.findIndex(
           (task) => task.taskHtml === element.closest(".task").outerHTML,
         );
