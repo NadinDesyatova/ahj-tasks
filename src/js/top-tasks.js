@@ -178,6 +178,10 @@ export default class TopTasks {
   }
 
   onInput() {
+    const existTooltip = this.tasksContainer.querySelector(".tooltip");
+    if (existTooltip !== null) {
+      existTooltip.remove();
+    }
     setTimeout(() => this.completeAllTasks(), 500);
   }
 
