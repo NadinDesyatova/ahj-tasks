@@ -14,6 +14,7 @@ export default class TopTasks {
     this.passValue = this.passValue.bind(this);
     this.validateAndCreateTask = this.validateAndCreateTask.bind(this);
     this.clear = this.clear.bind(this);
+    this.completeGroup = this.completeGroup.bind(this);
     this.completeAllTasks = this.completeAllTasks.bind(this);
     this.completePinnedTasks = this.completePinnedTasks.bind(this);
     this.mooveToPinnedToggle = this.mooveToPinnedToggle.bind(this);
@@ -90,37 +91,32 @@ export default class TopTasks {
       tasks.forEach((task) => task.remove());
     }
   }
+  
+  completeGroup(existElements, parent, tasksArr, emptyElement) {
+    this.clear(existElements);
+    if (tasksArr.length > 0) {
+      if (tasksArr.length === 1) {
+        emptyElement.classList.remove("empty__group_active");
+      }
+      tasksArr.forEach((task) => {
+        parent.insertAdjacentHTML("beforeend", task.taskHtml);
+      });
+    } else {
+      emptyElement.classList.add("empty__group_active");
+    }
+  }
 
   completeAllTasks() {
     const all = this.allTasksElement.querySelectorAll(".task");
-    this.clear(all);
     const searchTasksCollection = this.searchTasks.filter(
       this.inputElement.value.trim(),
     );
-    if (searchTasksCollection.length > 0) {
-      this.allTasksIsEmpty.classList.remove("empty__group_active");
-      searchTasksCollection.forEach((task) => {
-        this.allTasksElement.insertAdjacentHTML("beforeend", task.taskHtml);
-      });
-    } else {
-      this.allTasksIsEmpty.classList.add("empty__group_active");
-    }
+    this.completeGroup(all, this.allTasksElement, searchTasksCollection, this.allTasksIsEmpty);
   }
 
   completePinnedTasks() {
     const pinned = this.pinnedTasksElement.querySelectorAll(".task");
-    this.clear(pinned);
-    if (this.pinnedTasks.tasks.length > 0) {
-      if (this.pinnedTasks.tasks.length === 1) {
-        this.pinnedTasksIsEmpty.classList.remove("empty__group_active");
-      }
-      this.pinnedTasksIsEmpty.classList.remove("empty__group_active");
-      this.pinnedTasks.tasks.forEach((task) => {
-        this.pinnedTasksElement.insertAdjacentHTML("beforeend", task.taskHtml);
-      });
-    } else {
-      this.pinnedTasksIsEmpty.classList.add("empty__group_active");
-    }
+    this.completeGroup(pinned, this.pinnedTasksElement, this.pinnedTasks.tasks, this.pinnedTasksIsEmpty)
   }
 
   mooveToAllToggle() {
