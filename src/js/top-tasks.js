@@ -17,11 +17,11 @@ export default class TopTasks {
     this.completeGroup = this.completeGroup.bind(this);
     this.completeAllTasks = this.completeAllTasks.bind(this);
     this.completePinnedTasks = this.completePinnedTasks.bind(this);
+    this.changeGroupToggle = this.changeGroupToggle.bind(this);
     this.mooveToPinnedToggle = this.mooveToPinnedToggle.bind(this);
     this.mooveToAllToggle = this.mooveToAllToggle.bind(this);
     this.onEnterInput = this.onEnterInput.bind(this);
     this.onInput = this.onInput.bind(this);
-    this.isInput = this.isInput.bind(this);
   }
 
   createTopTasksHtml() {
@@ -95,9 +95,7 @@ export default class TopTasks {
   completeGroup(existElements, parent, tasksArr, emptyElement) {
     this.clear(existElements);
     if (tasksArr.length > 0) {
-      if (tasksArr.length === 1) {
-        emptyElement.classList.remove("empty__group_active");
-      }
+      emptyElement.classList.remove("empty__group_active");
       tasksArr.forEach((task) => {
         parent.insertAdjacentHTML("beforeend", task.taskHtml);
       });
@@ -119,53 +117,51 @@ export default class TopTasks {
     this.completeGroup(pinned, this.pinnedTasksElement, this.pinnedTasks.tasks, this.pinnedTasksIsEmpty)
   }
 
+  changeGroupToggle(
+    elemTarget, 
+    initialClass, 
+    initialTasks, 
+    finalClass, 
+    finalTasks 
+  ) {
+    if (elemTarget.classList.contains(initialClass)) {
+      const elementIndexToMoove = initialTasks.tasks.findIndex(
+        (task) => task.taskHtml === elemTarget.closest(".task").outerHTML,
+      );
+      const elementToMoove = initialTasks.tasks.find(
+        (task) => task.taskHtml === elemTarget.closest(".task").outerHTML,
+      );
+      initialTasks.tasks.splice(elementIndexToMoove, 1);
+      elementToMoove.taskHtml = `<div class="task"><div class="task__title">${elementToMoove.value}</div><div class="task__toggle ${finalClass}"></div></div>`;
+      finalTasks.add(elementToMoove);
+      this.completeAllTasks();
+      this.completePinnedTasks();
+    }
+  }
+
   mooveToAllToggle() {
     this.pinnedTasksElement.addEventListener("click", (event) => {
       const element = event.target;
-      if (element.classList.contains("task__toggle-checked")) {
-        const elementIndexToAll = this.pinnedTasks.tasks.findIndex(
-          (task) => task.taskHtml === element.closest(".task").outerHTML,
-        );
-        const elementToAll = this.pinnedTasks.tasks.find(
-          (task) => task.taskHtml === element.closest(".task").outerHTML,
-        );
-        this.pinnedTasks.tasks.splice(elementIndexToAll, 1);
-        if (this.pinnedTasks.tasks.length === 0) {
-          this.pinnedTasksIsEmpty.classList.add("empty__group_active");
-        }
-        elementToAll.taskHtml = `<div class="task"><div class="task__title">${elementToAll.value}</div><div class="task__toggle task__toggle-unchecked"></div></div>`;
-        this.allTasks.add(elementToAll);
-        if (this.allTasks.tasks.length === 1) {
-          this.allTasksIsEmpty.classList.remove("empty__group_active");
-        }
-        this.completeAllTasks();
-        this.completePinnedTasks();
-      }
+      this.changeGroupToggle(
+        element, 
+        "task__toggle-checked", 
+        this.pinnedTasks, 
+        "task__toggle-unchecked", 
+        this.allTasks
+      );
     });
   }
 
   mooveToPinnedToggle() {
     this.allTasksElement.addEventListener("click", (event) => {
       const element = event.target;
-      if (element.classList.contains("task__toggle-unchecked")) {
-        const elementIndexToPin = this.allTasks.tasks.findIndex(
-          (task) => task.taskHtml === element.closest(".task").outerHTML,
-        );
-        const elementToPin = this.allTasks.tasks.find(
-          (task) => task.taskHtml === element.closest(".task").outerHTML,
-        );
-        this.allTasks.tasks.splice(elementIndexToPin, 1);
-        if (this.allTasks.tasks.length === 0) {
-          this.allTasksIsEmpty.classList.add("empty__group_active");
-        }
-        elementToPin.taskHtml = `<div class="task"><div class="task__title">${elementToPin.value}</div><div class="task__toggle task__toggle-checked"></div></div>`;
-        this.pinnedTasks.add(elementToPin);
-        if (this.pinnedTasks.tasks.length === 1) {
-          this.pinnedTasksIsEmpty.classList.remove("empty__group_active");
-        }
-        this.completeAllTasks();
-        this.completePinnedTasks();
-      }
+      this.changeGroupToggle(
+        element, 
+        "task__toggle-unchecked", 
+        this.allTasks, 
+        "task__toggle-checked", 
+        this.pinnedTasks
+      );
     });
   }
 
