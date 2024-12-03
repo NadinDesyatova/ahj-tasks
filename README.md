@@ -2,6 +2,8 @@
 
 ![CI](https://github.com//NadinDesyatova/ahj-tasks/actions/workflows/web.yml/badge.svg)
 
+[Ссылка на Gihub Pages](https://nadindesyatova.github.io/ahj-tasks/)
+
 ### TOP Tasks
 
 Реализован трекер задач, в котором есть возможность отображать назначенные пользователю задачи. 
