@@ -84,6 +84,7 @@
 .task__toggle {
   flex-grow: 0;
   flex-shrink: 0;
+  align-self: center;
   padding-bottom: 5px;
   background-image: url("../img/task-unchecked.svg");
   background-repeat: no-repeat;
