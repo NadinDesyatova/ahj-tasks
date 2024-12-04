@@ -85,13 +85,12 @@
   flex-grow: 0;
   flex-shrink: 0;
   align-self: center;
-  padding-bottom: 5px;
+  padding-bottom: 6px;
   background-image: url("../img/task-unchecked.svg");
   background-repeat: no-repeat;
   background-size: contain;
   height: 32px;
   width: 32px;
-  outline-offset: -1px;
 }
 
 .task__toggle-checked {
