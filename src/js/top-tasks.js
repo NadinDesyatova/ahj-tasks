@@ -18,8 +18,7 @@ export default class TopTasks {
     this.completeAllTasks = this.completeAllTasks.bind(this);
     this.completePinnedTasks = this.completePinnedTasks.bind(this);
     this.changeGroupToggle = this.changeGroupToggle.bind(this);
-    this.mooveToPinnedToggle = this.mooveToPinnedToggle.bind(this);
-    this.mooveToAllToggle = this.mooveToAllToggle.bind(this);
+    this.isChangingGroup = this.isChangingGroup.bind(this);
     this.onEnterInput = this.onEnterInput.bind(this);
     this.onInput = this.onInput.bind(this);
   }
@@ -33,24 +32,29 @@ export default class TopTasks {
         </form>
         <div class="tasks__list">
           <div class="group__title group__title__pinned">Pinned:</div>
-          <div class="group__pinned">
+          <div class="group group__pinned">
             <div class="empty__group empty__group_active">...No pinned tasks</div>
           </div>
           <div class="group__title group__title__all">All Tasks:</div>
-          <div class="group__all">
+          <div class="group group__all">
             <div class="empty__group empty__group_active">...No tasks found</div>
           </div>
         </div>
       </div>`;
     this.container.insertAdjacentHTML("beforeend", topTasksHtml);
     this.tasksContainer = this.container.querySelector(".tasks");
+
     this.inputElement = this.tasksContainer.querySelector(".tasks__input");
+    
     this.allTasksElement = this.tasksContainer.querySelector(".group__all");
     this.allTasksIsEmpty = this.allTasksElement.querySelector(".empty__group");
+
     this.pinnedTasksElement =
       this.tasksContainer.querySelector(".group__pinned");
     this.pinnedTasksIsEmpty =
       this.pinnedTasksElement.querySelector(".empty__group");
+
+    this.groups = this.tasksContainer.querySelectorAll(".group");
   }
 
   passValue() {
@@ -138,30 +142,27 @@ export default class TopTasks {
       this.completePinnedTasks();
     }
   }
-
-  mooveToAllToggle() {
-    this.pinnedTasksElement.addEventListener("click", (event) => {
-      const element = event.target;
-      this.changeGroupToggle(
-        element, 
-        "task__toggle-checked", 
-        this.pinnedTasks, 
-        "task__toggle-unchecked", 
-        this.allTasks
-      );
-    });
-  }
-
-  mooveToPinnedToggle() {
-    this.allTasksElement.addEventListener("click", (event) => {
-      const element = event.target;
-      this.changeGroupToggle(
-        element, 
-        "task__toggle-unchecked", 
-        this.allTasks, 
-        "task__toggle-checked", 
-        this.pinnedTasks
-      );
+  
+  isChangingGroup() {
+    this.groups.forEach(group => {
+      group.addEventListener("click", (event) => {
+        const element = event.target;
+        const { initialClass, initialTasks, finalClass, finalTasks } =
+          group.classList.contains("group__all")
+            ? { 
+                initialClass: "task__toggle-unchecked", 
+                initialTasks: this.allTasks, 
+                finalClass: "task__toggle-checked", 
+                finalTasks: this.pinnedTasks 
+              }
+            : {
+                initialClass: "task__toggle-checked", 
+                initialTasks: this.pinnedTasks, 
+                finalClass: "task__toggle-unchecked", 
+                finalTasks: this.allTasks 
+              };
+        this.changeGroupToggle(element, initialClass, initialTasks, finalClass, finalTasks);
+      });
     });
   }
 
